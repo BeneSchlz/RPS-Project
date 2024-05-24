@@ -21,3 +21,4 @@ function getHumanChoice () {
     return humanChoice;
 }
 console.log(getHumanChoice());
+
