@@ -1,55 +1,70 @@
 function getComputerChoice() {
-    let random = Math.floor(Math.random() * 3);
-    if (random === 0) {
-        return "rock";
-    } else if (random === 1) {
-        return "paper";
-    } else {
-        return "scissors";
-    }
+    const choiceNumber = Math.floor(Math.random() * 10);
+    return choiceNumber < 4 ? "rock"
+        : choiceNumber >= 4 && choiceNumber <= 7 ? "paper"
+        : "scissors";
 }
 
-function getHumanChoice() {
-    let humanChoice = prompt("Choose Rock, Paper, or Scissors");
-    humanChoice = humanChoice.toLowerCase();
-    while (humanChoice !== "rock" && humanChoice !== "paper" && humanChoice !== "scissors") {
-        humanChoice = prompt("Invalid choice. Please choose Rock, Paper, or Scissors").toLowerCase();
-    }
-    return humanChoice;
-}
+let humanScore = 0;
+let computerScore = 0;
 
-function playRound(humanChoice, computerChoice, scores) {
-    const choices = ["rock", "paper", "scissors"];
-    const humanChoiceIndex = choices.indexOf(humanChoice);
-    const computerChoiceIndex = choices.indexOf(computerChoice);
+function playRound(humanChoice, computerChoice) {
+    
 
-    console.log(`Computer chose: ${computerChoice}`);
+    const results = document.querySelector("#results");
+    results.textContent = `Your choice was: ${humanChoice}! \nComputer's choice was: ${computerChoice}!`
 
-    if (humanChoiceIndex === (computerChoiceIndex + 1) % 3) {
-        console.log(`You win! ${humanChoice.toUpperCase()} beats ${computerChoice.toUpperCase()}.`);
-        scores.humanScore++;
-    } else if (computerChoiceIndex === (humanChoiceIndex + 1) % 3) {
-        console.log(`You lose! ${computerChoice.toUpperCase()} beats ${humanChoice.toUpperCase()}.`);
-        scores.computerScore++;
-    } else {
-        console.log(`Draw! Both players chose ${computerChoice.toUpperCase()}.`);
-    }
+    let scoreGoesTo = "";
 
-    console.log("Current Scores:");
-    console.log(`Player Score: ${scores.humanScore}`);
-    console.log(`Computer Score: ${scores.computerScore}`);
-}
+    scoreGoesTo = humanChoice === computerChoice ? "nobody"
+    : humanChoice === "rock" && computerChoice === "paper" ? "computer"
+    : humanChoice === "rock" && computerChoice === "scissors" ? "human"
+    : humanChoice === "paper" && computerChoice === "rock" ? "human"
+    : humanChoice === "paper" && computerChoice === "scissors" ? "computer"
+    : humanChoice === "scissors" && computerChoice === "paper" ? "human"
+    : humanChoice === "scissors" && computerChoice === "rock" ? "computer"
+    : console.warn("Logical error");
 
-function playGame(rounds = 5) {
-    let scores = { humanScore: 0, computerScore: 0 };
+    const roundWinnerText = document.createElement("p");
 
-    for (let i = 0; i < rounds; i++) {
-        playRound(getHumanChoice(), getComputerChoice(), scores);
+    if (scoreGoesTo === "nobody") {
+        roundWinnerText.textContent += "\nDraw!"
+    } else if (scoreGoesTo === "human") {
+        roundWinnerText.textContent += "\nYou win!"
+        humanScore++;
+    } else if (scoreGoesTo === "computer") {
+        roundWinnerText.textContent += "\nYou lose!"
+        computerScore++;
     }
 
-    console.log("Final Scores:");
-    console.log(`Player Score: ${scores.humanScore}`);
-    console.log(`Computer Score: ${scores.computerScore}`);
+    if (humanScore === 5) {
+        alert("Congratulations! You have won 5 rounds!");
+        humanScore = 0;
+        computerScore = 0;
+    } else if (computerScore === 5) {
+        alert("You have lost 5 rounds! Better luck next time!");
+        humanScore = 0;
+        computerScore = 0;
+    }
+
+    const scoresDisplay = document.querySelector("#scores");
+    scoresDisplay.textContent = `Scores - You: ${humanScore} / Computer: ${computerScore}`
+    results.appendChild(roundWinnerText);
+
 }
 
-playGame();
+const rock = document.querySelector("#rock");
+const paper = document.querySelector("#paper");
+const scissors = document.querySelector("#scissors");
+
+rock.addEventListener("click", () => {
+    playRound("rock", getComputerChoice());
+})
+
+paper.addEventListener("click", () => {
+    playRound("paper", getComputerChoice());
+})
+
+scissors.addEventListener("click", () => {
+    playRound("scissors", getComputerChoice());
+})
